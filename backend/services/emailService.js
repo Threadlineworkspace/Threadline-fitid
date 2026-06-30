@@ -6,7 +6,7 @@ import { rectangleEmail } from '../emails/templates/rectangle.js';
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.THREADLINE_RESEND_API_KEY);
 
 // Map FitIDs to email template functions
 const emailTemplates = {
