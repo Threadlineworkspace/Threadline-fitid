@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Target, ChevronRight } from 'lucide-react';
+import { Menu, X, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
 const navLinks = [
@@ -51,14 +51,13 @@ export const Navbar = () => {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
-            {/* Logo */}
+            {/* Logo - Matching footer logo style */}
             <Link to="/" className="flex items-center gap-2 group relative z-50">
-              <div className="w-10 h-10 bg-[#323352] rounded-xl flex items-center justify-center transition-transform group-hover:scale-105">
-                <Target className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-[#323352] group-hover:text-[#C76A32] transition-colors">
-                Threadline
-              </span>
+              <img 
+                src="/threadline-logo.svg" 
+                alt="Threadline" 
+                className="h-10 w-auto transition-transform group-hover:scale-105"
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -133,6 +132,15 @@ export const Navbar = () => {
               {/* Decorative elements */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#C76A32]/10 rounded-full blur-3xl" />
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#C76A32]/5 rounded-full blur-3xl" />
+
+              {/* Logo in menu - White version like footer */}
+              <div className="relative mb-8">
+                <img 
+                  src="/threadline-logo-white.svg" 
+                  alt="Threadline" 
+                  className="h-10 w-auto"
+                />
+              </div>
 
               {/* Navigation Links */}
               <div className="relative flex-1 flex flex-col justify-center">

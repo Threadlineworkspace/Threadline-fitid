@@ -5,6 +5,11 @@ import { MdEmail } from 'react-icons/md';
 import { Shield } from 'lucide-react';
 
 export const Footer = () => {
+  // Function to scroll to top when admin link is clicked
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="bg-[#323352] text-white">
       <div className="container mx-auto px-4 py-16">
@@ -85,10 +90,11 @@ export const Footer = () => {
               </a>
             </div>
             
-            {/* Admin Login Link - Subtle */}
+            {/* Admin Login Link - Scrolls to top */}
             <div className="pt-4 border-t border-white/10">
               <Link 
                 to="/admin/login" 
+                onClick={scrollToTop}
                 className="text-white/30 hover:text-white/70 text-xs flex items-center gap-1 transition-colors"
               >
                 <Shield className="w-3 h-3" />
