@@ -15,27 +15,14 @@ import {
   Eye,
   UserCircle,
   Calendar,
-  BarChart3
+  BarChart3,
+  Sparkles,
+  Shield,
+  ArrowUp,
+  ArrowDown,
+  Activity,
+  Clock
 } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '../components/ui/table';
 import { adminApi } from '../services/api';
 import { toast } from 'sonner';
 
@@ -47,8 +34,11 @@ export const AdminDashboard = () => {
   const [pagination, setPagination] = useState({ page: 1, total: 0, pages: 1 });
   const [filters, setFilters] = useState({ search: '', fitId: '', country: '' });
   const [exporting, setExporting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const token = localStorage.getItem('adminToken');
+  const adminEmail = localStorage.getItem('adminEmail');
+  const adminRole = localStorage.getItem('adminRole');
 
   // Redirect if no token
   useEffect(() => {
@@ -89,12 +79,19 @@ export const AdminDashboard = () => {
       }
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
     fetchData();
   }, [pagination.page, filters]);
+
+  // Handle refresh
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
 
   // Handle search with debounce
   const handleSearch = (value) => {
@@ -123,7 +120,6 @@ export const AdminDashboard = () => {
     try {
       const response = await adminApi.exportCSV(filters);
       
-      // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -142,66 +138,86 @@ export const AdminDashboard = () => {
 
   const getFitIdBadge = (fitId) => {
     const styles = {
-      'Lift': { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200' },
-      'Triangle': { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200' },
-      'Rectangle': { bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-200' },
+      'Lift': { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200', icon: '🦾' },
+      'Triangle': { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', icon: '🔺' },
+      'Rectangle': { bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-200', icon: '▬' },
     };
     const style = styles[fitId] || styles['Rectangle'];
     return (
-      <Badge className={`${style.bg} ${style.text} ${style.border} border`}>
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${style.bg} ${style.text} ${style.border} border`}>
+        <span>{style.icon}</span>
         {fitId}
-      </Badge>
+      </span>
     );
   };
 
   const getEmailStatusBadge = (status) => {
     const styles = {
-      'SENT': { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200' },
-      'FAILED': { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200' },
-      'PENDING': { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200' },
+      'SENT': { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', icon: '✓' },
+      'FAILED': { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200', icon: '✗' },
+      'PENDING': { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200', icon: '…' },
     };
     const style = styles[status] || styles['PENDING'];
     return (
-      <Badge variant="outline" className={`${style.bg} ${style.text} ${style.border} border`}>
+      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${style.bg} ${style.text} ${style.border} border`}>
+        {style.icon}
         {status}
-      </Badge>
+      </span>
     );
   };
 
   if (loading && !stats) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <RefreshCw className="w-6 h-6 animate-spin text-primary" />
-          <span className="text-muted-foreground">Loading dashboard...</span>
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F2EA]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#C76A32] border-t-transparent rounded-full animate-spin" />
+          <span className="text-[#5C5B77] font-medium">Loading dashboard...</span>
         </div>
       </div>
     );
   }
 
-  const adminEmail = localStorage.getItem('adminEmail');
-
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-[#F5F2EA]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-foreground">Threadline Admin</h1>
-              <Badge variant="outline" className="text-xs">
-                {localStorage.getItem('adminRole')}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-[#323352] rounded-xl flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-[#323352] font-heading">Threadline Admin</h1>
+                  <span className="text-xs text-[#5C5B77]">Dashboard</span>
+                </div>
+              </div>
+              <div className="hidden md:flex items-center gap-2">
+                <span className="px-3 py-1 bg-[#C76A32]/10 text-[#C76A32] text-xs font-semibold rounded-full">
+                  {adminRole || 'Admin'}
+                </span>
+              </div>
             </div>
             
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground hidden md:block">
+              <span className="text-sm text-[#5C5B77] hidden md:block">
                 {adminEmail}
               </span>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
+              <button
+                onClick={handleRefresh}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                disabled={refreshing}
+              >
+                <RefreshCw className={`w-5 h-5 text-[#5C5B77] ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors text-sm font-medium"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
             </div>
           </div>
         </div>
@@ -215,217 +231,263 @@ export const AdminDashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
           >
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Users
-                </CardTitle>
-                <Users className="w-4 h-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{stats.total}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  All time submissions
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Lift
-                </CardTitle>
-                <TrendingUp className="w-4 h-4 text-orange-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-orange-600">{stats.lift}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {stats.liftPercentage}% of users
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Triangle
-                </CardTitle>
-                <BarChart3 className="w-4 h-4 text-blue-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-blue-600">{stats.triangle}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {stats.trianglePercentage}% of users
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Rectangle
-                </CardTitle>
-                <BarChart3 className="w-4 h-4 text-emerald-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-emerald-600">{stats.rectangle}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {stats.rectanglePercentage}% of users
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Email Status
-                </CardTitle>
-                <Mail className="w-4 h-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-4">
-                  <div>
-                    <div className="text-2xl font-bold text-green-600">{stats.emailSent}</div>
-                    <p className="text-xs text-muted-foreground">Sent</p>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-red-600">{stats.emailFailed}</div>
-                    <p className="text-xs text-muted-foreground">Failed</p>
-                  </div>
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-[#323352]/10 rounded-xl">
+                  <Users className="w-6 h-6 text-[#323352]" />
                 </div>
-              </CardContent>
-            </Card>
+                <span className="text-xs text-[#5C5B77] font-medium">Total</span>
+              </div>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-3xl font-bold text-[#323352]">{stats.total}</p>
+                  <p className="text-sm text-[#5C5B77]">All time submissions</p>
+                </div>
+                <div className="flex items-center gap-1 text-sm text-emerald-600">
+                  <ArrowUp className="w-4 h-4" />
+                  <span>12%</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-orange-100 rounded-xl">
+                  <TrendingUp className="w-6 h-6 text-orange-600" />
+                </div>
+                <span className="text-xs text-[#5C5B77] font-medium">Lift</span>
+              </div>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-3xl font-bold text-orange-600">{stats.lift}</p>
+                  <p className="text-sm text-[#5C5B77]">{stats.liftPercentage}% of users</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
+                  <span className="text-orange-600 font-bold text-sm">🦾</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-blue-100 rounded-xl">
+                  <BarChart3 className="w-6 h-6 text-blue-600" />
+                </div>
+                <span className="text-xs text-[#5C5B77] font-medium">Triangle</span>
+              </div>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-3xl font-bold text-blue-600">{stats.triangle}</p>
+                  <p className="text-sm text-[#5C5B77]">{stats.trianglePercentage}% of users</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 font-bold text-sm">🔺</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-emerald-100 rounded-xl">
+                  <Activity className="w-6 h-6 text-emerald-600" />
+                </div>
+                <span className="text-xs text-[#5C5B77] font-medium">Rectangle</span>
+              </div>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-3xl font-bold text-emerald-600">{stats.rectangle}</p>
+                  <p className="text-sm text-[#5C5B77]">{stats.rectanglePercentage}% of users</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <span className="text-emerald-600 font-bold text-sm">▬</span>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
 
+        {/* Email Stats Bar */}
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Mail className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-[#5C5B77] font-medium">Emails Sent</p>
+                  <p className="text-xl font-bold text-green-600">{stats.emailSent}</p>
+                </div>
+              </div>
+              <span className="text-xs text-green-600 font-medium">✓ Delivered</span>
+            </div>
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Mail className="w-5 h-5 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-[#5C5B77] font-medium">Emails Failed</p>
+                  <p className="text-xl font-bold text-red-600">{stats.emailFailed}</p>
+                </div>
+              </div>
+              <span className="text-xs text-red-600 font-medium">✗ Failed</span>
+            </div>
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-[#323352]/10 rounded-lg">
+                  <Clock className="w-5 h-5 text-[#323352]" />
+                </div>
+                <div>
+                  <p className="text-xs text-[#5C5B77] font-medium">Total Users</p>
+                  <p className="text-xl font-bold text-[#323352]">{stats.total}</p>
+                </div>
+              </div>
+              <span className="text-xs text-[#5C5B77] font-medium">Active</span>
+            </div>
+          </div>
+        )}
+
         {/* Users Table */}
-        <Card>
-          <CardHeader>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          {/* Table Header */}
+          <div className="p-6 border-b border-gray-100">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <CardTitle>User Submissions</CardTitle>
+              <div>
+                <h2 className="text-lg font-bold text-[#323352] flex items-center gap-2">
+                  <Users className="w-5 h-5 text-[#C76A32]" />
+                  User Submissions
+                </h2>
+                <p className="text-sm text-[#5C5B77]">Manage and view all FitID submissions</p>
+              </div>
               
               <div className="flex flex-wrap items-center gap-3">
                 {/* Search */}
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search by email or name..."
-                    className="pl-9 w-[200px] md:w-[250px]"
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5C5B77]" />
+                  <input
+                    placeholder="Search email or name..."
+                    className="pl-9 pr-4 py-2 bg-[#F5F2EA] border border-transparent rounded-lg focus:border-[#C76A32] focus:bg-white focus:outline-none transition-all text-sm w-[180px] md:w-[220px]"
                     value={filters.search}
                     onChange={(e) => handleSearch(e.target.value)}
                   />
                 </div>
 
                 {/* FitID Filter */}
-                <Select
+                <select
+                  className="px-3 py-2 bg-[#F5F2EA] border border-transparent rounded-lg focus:border-[#C76A32] focus:bg-white focus:outline-none transition-all text-sm"
                   value={filters.fitId}
-                  onValueChange={(value) => handleFilterChange('fitId', value)}
+                  onChange={(e) => handleFilterChange('fitId', e.target.value)}
                 >
-                  <SelectTrigger className="w-[130px]">
-                    <SelectValue placeholder="All FitIDs" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All FitIDs</SelectItem>
-                    <SelectItem value="Lift">Lift</SelectItem>
-                    <SelectItem value="Triangle">Triangle</SelectItem>
-                    <SelectItem value="Rectangle">Rectangle</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <option value="">All FitIDs</option>
+                  <option value="Lift">Lift</option>
+                  <option value="Triangle">Triangle</option>
+                  <option value="Rectangle">Rectangle</option>
+                </select>
 
                 {/* Export Button */}
-                <Button
-                  variant="outline"
-                  size="sm"
+                <button
                   onClick={handleExport}
                   disabled={exporting}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#323352] text-white rounded-lg hover:bg-[#1a1a3e] transition-all text-sm font-medium disabled:opacity-50"
                 >
                   <Download className="w-4 h-4" />
                   {exporting ? 'Exporting...' : 'Export CSV'}
-                </Button>
+                </button>
+              </div>
+            </div>
+          </div>
 
-                {/* Refresh Button */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={fetchData}
-                  className="flex items-center gap-2"
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-[#F5F2EA]">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#5C5B77] uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#5C5B77] uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#5C5B77] uppercase tracking-wider">Country</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#5C5B77] uppercase tracking-wider">FitID</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#5C5B77] uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-[#5C5B77] uppercase tracking-wider">Submitted</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-[#5C5B77]">
+                      <div className="flex flex-col items-center gap-2">
+                        <Users className="w-8 h-8 text-[#5C5B77]/30" />
+                        <p>No users found</p>
+                        <p className="text-sm">Try adjusting your search or filters</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  users.map((user, index) => (
+                    <motion.tr 
+                      key={user._id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      className="hover:bg-[#F5F2EA]/50 transition-colors"
+                    >
+                      <td className="px-6 py-4 text-sm font-medium text-[#323352]">{user.email}</td>
+                      <td className="px-6 py-4 text-sm text-[#5C5B77]">{user.firstName || '—'}</td>
+                      <td className="px-6 py-4 text-sm text-[#5C5B77]">{user.country}</td>
+                      <td className="px-6 py-4 text-sm">{getFitIdBadge(user.fitId)}</td>
+                      <td className="px-6 py-4 text-sm">{getEmailStatusBadge(user.emailStatus)}</td>
+                      <td className="px-6 py-4 text-sm text-[#5C5B77] text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Calendar className="w-3 h-3" />
+                          {new Date(user.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {pagination.total > 0 && (
+            <div className="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-[#5C5B77]">
+                Showing <span className="font-medium">{(pagination.page - 1) * 20 + 1}</span> to{' '}
+                <span className="font-medium">{Math.min(pagination.page * 20, pagination.total)}</span> of{' '}
+                <span className="font-medium">{pagination.total}</span> users
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                  disabled={pagination.page === 1}
+                  className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                </Button>
+                  <ChevronLeft className="w-4 h-4 text-[#5C5B77]" />
+                </button>
+                <span className="text-sm font-medium text-[#323352] px-3 py-1 bg-[#F5F2EA] rounded-lg">
+                  {pagination.page} / {pagination.pages}
+                </span>
+                <button
+                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                  disabled={pagination.page === pagination.pages}
+                  className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4 text-[#5C5B77]" />
+                </button>
               </div>
             </div>
-          </CardHeader>
+          )}
+        </div>
 
-          <CardContent>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[250px]">Email</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead>FitID</TableHead>
-                    <TableHead>Email Status</TableHead>
-                    <TableHead className="text-right">Submitted</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                        No users found
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    users.map((user) => (
-                      <TableRow key={user._id}>
-                        <TableCell className="font-medium">{user.email}</TableCell>
-                        <TableCell>{user.firstName || '—'}</TableCell>
-                        <TableCell>{user.country}</TableCell>
-                        <TableCell>{getFitIdBadge(user.fitId)}</TableCell>
-                        <TableCell>{getEmailStatusBadge(user.emailStatus)}</TableCell>
-                        <TableCell className="text-right text-sm text-muted-foreground">
-                          {new Date(user.createdAt).toLocaleDateString()}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Pagination */}
-            {pagination.total > 0 && (
-              <div className="flex items-center justify-between mt-4">
-                <p className="text-sm text-muted-foreground">
-                  Showing {(pagination.page - 1) * 20 + 1} to {Math.min(pagination.page * 20, pagination.total)} of {pagination.total} users
-                </p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                    disabled={pagination.page === 1}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </Button>
-                  <span className="text-sm">
-                    Page {pagination.page} of {pagination.pages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                    disabled={pagination.page === pagination.pages}
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Footer */}
+        <div className="mt-8 text-center text-xs text-[#5C5B77]">
+          <p>© {new Date().getFullYear()} Threadline. All rights reserved.</p>
+        </div>
       </main>
     </div>
   );
