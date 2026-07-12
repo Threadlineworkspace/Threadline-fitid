@@ -1,6 +1,5 @@
 
 
-
 // import React from 'react';
 // import { motion, AnimatePresence } from 'framer-motion';
 // import { useNavigate } from 'react-router-dom';
@@ -9,7 +8,7 @@
 // import { FormSections } from '../components/forms/FormSections';
 // import { fitidApi } from '../services/api';
 // import { toast } from 'sonner';
-// import { ArrowLeft, ArrowRight, Loader2, Sparkles, Target, ChevronRight } from 'lucide-react';
+// import { ArrowLeft, ArrowRight, Loader2, Target, ChevronRight } from 'lucide-react';
 // import { Button } from '../components/ui/button';
 
 // export const FitIDPage = () => {
@@ -169,7 +168,7 @@
 //                     ) : (
 //                       <>
 //                         Get My Fit ID
-//                         <Sparkles className="w-5 h-5" />
+//                         <Target className="w-5 h-5" />
 //                       </>
 //                     )}
 //                   </Button>
@@ -205,7 +204,6 @@
 //     </div>
 //   );
 // };
-
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -297,7 +295,7 @@ export const FitIDPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#C76A32]/10 text-[#C76A32] rounded-full text-sm font-medium tracking-wide mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#fa6902]/10 text-[#fa6902] rounded-full text-sm font-medium tracking-wide mb-4">
             <Target className="w-4 h-4" />
             <span>Step {currentStep + 1} of 8</span>
           </div>
@@ -312,7 +310,7 @@ export const FitIDPage = () => {
           <div className="max-w-md mx-auto mt-6">
             <div className="w-full h-1.5 bg-[#E8E4DB] rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-[#C76A32] rounded-full"
+                className="h-full bg-[#fa6902] rounded-full"
                 initial={{ width: '0%' }}
                 animate={{ width: `${progressPercentage}%` }}
                 transition={{ duration: 0.5 }}
@@ -365,7 +363,7 @@ export const FitIDPage = () => {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto bg-[#C76A32] hover:bg-[#B85D2A] text-white rounded-xl px-8 py-6 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto bg-[#fa6902] hover:bg-[#e05e00] text-white rounded-xl px-8 py-6 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -402,9 +400,9 @@ export const FitIDPage = () => {
           transition={{ delay: 0.3 }}
         >
           <p className="text-sm text-[#5C5B77] flex items-center justify-center gap-2">
-            <span className="w-1.5 h-1.5 bg-[#C76A32] rounded-full" />
+            <span className="w-1.5 h-1.5 bg-[#fa6902] rounded-full" />
             Your data is secure. We'll never share your information.
-            <span className="w-1.5 h-1.5 bg-[#C76A32] rounded-full" />
+            <span className="w-1.5 h-1.5 bg-[#fa6902] rounded-full" />
           </p>
         </motion.div>
       </div>

@@ -8,7 +8,6 @@
 //   ArrowRight, 
 //   Mail, 
 //   User, 
-//   Sparkles,
 //   Target,
 //   Ruler,
 //   Move,
@@ -31,10 +30,11 @@
 //   const getFitIdDetails = () => {
 //     const details = {
 //       'Lift': {
-//         color: 'from-orange-500 to-amber-600',
-//         bgColor: 'bg-orange-50',
-//         borderColor: 'border-orange-200',
+//         color: 'from-[#C76A32] to-[#B85D2A]',
+//         bgColor: 'bg-[#C76A32]/10',
+//         borderColor: 'border-[#C76A32]/30',
 //         icon: Target,
+//         textColor: 'text-[#C76A32]',
 //         description: 'You have a waist-to-hip differential that requires more room in the hip and thigh area.',
 //         topics: [
 //           'Waist-to-hip differential',
@@ -44,10 +44,11 @@
 //         ]
 //       },
 //       'Triangle': {
-//         color: 'from-blue-500 to-indigo-600',
-//         bgColor: 'bg-blue-50',
-//         borderColor: 'border-blue-200',
+//         color: 'from-[#323352] to-[#1a1a3e]',
+//         bgColor: 'bg-[#323352]/10',
+//         borderColor: 'border-[#323352]/30',
 //         icon: Move,
+//         textColor: 'text-[#323352]',
 //         description: 'You have movement-based fit challenges related to crotch and rise mechanics.',
 //         topics: [
 //           'Crotch and rise mechanics',
@@ -57,10 +58,11 @@
 //         ]
 //       },
 //       'Rectangle': {
-//         color: 'from-emerald-500 to-teal-600',
-//         bgColor: 'bg-emerald-50',
-//         borderColor: 'border-emerald-200',
+//         color: 'from-[#5C5B77] to-[#4a4963]',
+//         bgColor: 'bg-[#5C5B77]/10',
+//         borderColor: 'border-[#5C5B77]/30',
 //         icon: Ruler,
+//         textColor: 'text-[#5C5B77]',
 //         description: 'You have a balanced body proportion with standard fit requirements.',
 //         topics: [
 //           'Balanced body proportions',
@@ -76,7 +78,7 @@
 //   const IconComponent = details.icon;
 
 //   return (
-//     <div className="min-h-screen bg-gradient-to-b from-[#F5F2EA] to-white flex items-center justify-center px-4 py-12">
+//     <div className="min-h-screen bg-gradient-to-b from-[#F5F2EA] to-white flex items-center justify-center px-4 py-12 pt-32 xs:pt-28 sm:pt-24 md:pt-28">
 //       <motion.div
 //         initial={{ opacity: 0, y: 30 }}
 //         animate={{ opacity: 1, y: 0 }}
@@ -112,9 +114,9 @@
 //             {/* FitID Badge */}
 //             <div className="flex items-center justify-center gap-3 mb-6">
 //               <div className={`w-14 h-14 rounded-2xl ${details.bgColor} border ${details.borderColor} flex items-center justify-center`}>
-//                 <IconComponent className="w-7 h-7" style={{ color: fitId === 'Lift' ? '#EA580C' : fitId === 'Triangle' ? '#3B82F6' : '#059669' }} />
+//                 <IconComponent className={`w-7 h-7 ${details.textColor}`} />
 //               </div>
-//               <span className="text-3xl font-bold font-heading text-[#323352]">{fitId}</span>
+//               <span className={`text-3xl font-bold font-heading ${details.textColor}`}>{fitId}</span>
 //             </div>
 
 //             <p className="text-[#5C5B77] text-center text-lg mb-8 leading-relaxed">
@@ -206,7 +208,6 @@
 //     </div>
 //   );
 // };
-
 
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -403,10 +404,19 @@ export const ConfirmationPage = () => {
               </Button>
               <Button 
                 variant="outline" 
-                onClick={() => window.open('https://threadline.work', '_blank')}
-                className="flex-1 border-[#323352] text-[#323352] hover:bg-[#323352] hover:text-white rounded-xl py-6"
+                onClick={() => window.open('https://threadlineworkwear.webflow.io/', '_blank')}
+                className="flex-1 border-[#fa6902] text-[#fa6902] hover:bg-[#fa6902] hover:text-white rounded-xl py-6 transition-all duration-300"
+                style={{ borderColor: '#fa6902', color: '#fa6902' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#fa6902';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#fa6902';
+                }}
               >
-                Learn More
+                Return to Threadline
                 <ArrowUpRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
