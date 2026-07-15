@@ -18,10 +18,10 @@ export const StepIndicator = ({ currentStep }) => {
     <div className="w-full max-w-3xl mx-auto mb-12 px-4">
       <div className="relative flex justify-between">
         {/* Progress Bar Background */}
-        <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200">
+        <div className="absolute top-5 left-0 right-0 h-0.5 bg-white/10">
           {/* Progress Bar Fill */}
           <motion.div
-            className="h-full bg-primary"
+            className="h-full bg-[#fa6902]"
             initial={{ width: '0%' }}
             animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
             transition={{ duration: 0.5 }}
@@ -38,8 +38,8 @@ export const StepIndicator = ({ currentStep }) => {
                 className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition-colors z-10",
                   isActive
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-gray-400 border-gray-300"
+                    ? "bg-[#fa6902] text-white border-[#fa6902]"
+                    : "bg-[#1a1a1a] text-white/30 border-white/15"
                 )}
                 animate={{
                   scale: isCurrent ? 1.1 : 1,
@@ -51,7 +51,7 @@ export const StepIndicator = ({ currentStep }) => {
               <span
                 className={cn(
                   "text-xs mt-2 text-center hidden sm:block",
-                  isActive ? "text-primary font-medium" : "text-gray-400"
+                  isActive ? "text-[#fa6902] font-medium" : "text-white/30"
                 )}
               >
                 {step.label}

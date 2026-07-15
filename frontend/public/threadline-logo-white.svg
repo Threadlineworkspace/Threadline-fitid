@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" fill="none">
-  <!-- Replace this with your actual logo SVG -->
-  <rect x="0" y="5" width="40" height="40" rx="8" fill="#F5F2EA"/>
-  <path d="M12 20 L20 12 L28 20 L20 28 L12 20Z" fill="#323352"/>
-  <text x="50" y="34" font-family="'Playfair Display', serif" font-size="24" font-weight="700" fill="#F5F2EA">Threadline</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 40" fill="none">
+  <text x="0" y="30" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="900" letter-spacing="0.08em">
+    <tspan fill="#C76A32">THREAD</tspan><tspan fill="#F5F2EA">LINE</tspan>
+  </text>
 </svg>
